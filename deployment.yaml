@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shaikh-app
+  labels:
+    app: shaikh-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: shaikh-app
+  template:
+    metadata:
+      labels:
+        app: shaikh-app
+    spec:
+      containers:
+      - name: shaikh-app
+        image: mateenshaikh00/shaikh-app:$(Build.BuildId)  # Use the build ID as the tag
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: apache-logs
+          mountPath: /var/log/apache2
+      volumes:
+      - name: apache-logs
+        emptyDir: {}
+
+
+
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: shaikh-app
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: shaikh-app
+
